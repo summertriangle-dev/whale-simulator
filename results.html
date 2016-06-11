@@ -1,0 +1,63 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
+<link rel="stylesheet" href="/static/jquery.json-view.css" />
+<script src="/static/jquery.json-view.js"></script>
+
+<style>
+* { box-sizing: border-box; }
+.conversation {
+  font-size:0;
+}
+.client, .server {
+  width:50%;
+  display:inline-block;
+  font-size:16px;
+  vertical-align:top;
+  overflow:scroll;
+}
+
+.client pre, .server pre {
+  font-size:13px
+}
+
+.client {background:#ffaaaa}
+.server {background:#aaffaa}
+</style>
+
+{% for cl, sv in conversations %}
+<hr />
+<div class="conversation">
+  <div class="client">
+    <pre>E N D P O I N T -&gt;
+
+      /{{ cl.endpoint }}</pre>
+    <pre>H E A D E R S</pre>
+    <div class="json">{{ cl.headers }}</div>
+    <pre>D A T A</pre>
+    <div><button onclick="process(this, this.parentNode.childNodes[1])">Inspect</button><div style="display:none" class="_json">{{ cl.body_json }}</div></div>
+  </div>
+  <div class="server">
+    <pre>E N D P O I N T &lt;-
+
+      /{{ sv.endpoint }}</pre>
+    <pre>H E A D E R S</pre>
+    <div class="json">{{ sv.headers }}</div>
+    <pre>D A T A</pre>
+    <div><button onclick="process(this, this.parentNode.childNodes[1])">Inspect</button><div style="display:none" class="_json">{{ sv.body_json }}</div></div>
+  </div>
+</div>
+{% endfor %}
+
+<script>
+function process(b, v) {
+  var x = v.textContent;
+  v.textContent = "";
+  $(v).jsonView(x).css({display: "block"});
+
+  b.parentNode.removeChild(b);
+}
+$(function () { $('.json').each(function(i, v) {
+  var x = v.textContent;
+  v.textContent = "";
+  $(v).jsonView(x);
+}); });
+</script>

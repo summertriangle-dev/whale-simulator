@@ -1,0 +1,15 @@
+{
+  "port": 53,
+  "host": "0.0.0.0",
+  "logging": "dns-proxy:query",
+  "nameservers": [
+    "8.8.8.8",
+    "8.8.4.4"
+  ],
+  "servers": {},
+  "domains": {
+  },
+  "hosts": {
+    "game.starlight-stage.jp": "<your computer's IP here>"
+  }
+}
