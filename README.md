@@ -29,6 +29,8 @@ Installing a response modifier is pretty easy. Have a look at `proxy.py`.
 The sample hook replaces each card in your MV lineup with a SSR version of
 the same idol, if available.
 
+Outgoing requests cannot be hooked without keys.
+
 ### Pointing your device at the proxy
 
 #### Method 1: Hosts file
