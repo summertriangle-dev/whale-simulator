@@ -24,10 +24,63 @@ Red is a client message, green is a server response.
 
 ### Messing with responses
 
-Installing a response modifier is pretty easy. Have a look at `proxy.py`.
+The proxy lets you modify responses in two ways: hooks and intercepts. The
+main difference between the two is that hooked requests are still sent to
+the server, while intercepted requests are generated directly by the proxy.
+Intercepted/hooked requests will be marked with `(Intercepted)` and
+`(Modified)` in the server log, respectively.
 
-The sample hook replaces each card in your MV lineup with a SSR version of
-the same idol, if available.
+From a hook, you must modify the `msg` parameter *in-place*, then return
+a true value for the proxy to send your modified payload back to the
+client. You can return `msg`, but it's not required. Sample:
+
+```python
+@hook("/some/endpoint")
+def modify(msg):
+    msg["data"]["hello"] = "world"
+    return 1
+```
+
+Intercepts will not work unless there was a successful prior request to the
+server. This usually won't cause a problem unless you are intercepting
+`/load/check` (normally the first request made by the client).
+
+An intercept function gets the client request passed in. Sample:
+
+```python
+@intercept("/some/endpoint")
+def genresponse(client_request):
+    return {
+        "hello": "world"
+    }
+```
+
+**If you return None, the request will be sent to the server normally. Be
+careful.**
+
+From an intercept, you must return a payload dictionary that will be
+crypted and sent back to the client. Don't wrap it with a `data` key, the
+proxy will do this for you.
+
+```python
+Incorrect:                         |   Correct:
+{                                  |   {
+    "data": {                      |       "live_unit_member": [
+        "live_unit_member": [      |           300217,
+            300217,                |           200247,
+            200247,                |           200197,
+            200197,                |           200213,
+            200213,                |           200107
+            200107                 |       ]
+        ]                          |   }
+    }                              |
+}                                  |
+```
+
+**There can only be one hook and intercept for a particular endpoint,
+and a hook defined later will override any hooks before it. Additionally,
+intercepts take precedence over hooks, no matter the order in which
+they are defined.**
 
 Outgoing requests cannot be hooked without keys.
 

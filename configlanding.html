@@ -1,0 +1,34 @@
+<link rel="stylesheet" type="text/css" href="https://starlight.kirara.ca/static/css/main.css">
+<link rel="stylesheet" type="text/css" href="https://hoshimoriuta.kirara.ca/icons2/icons.css">
+
+<form method="get" action="/config_commit">
+  <input type="text" id="ordering_target" name="ordering_target" />
+  <input type="submit" value="Commit" />
+</form>
+
+{% for card in current %}
+<div onclick="insert({{ card }})" class="icon icon_{{ card }}"></div>
+{% endfor %}
+<p>MV positions: 3, 1, 0, 2, 4</p>
+
+<hr />
+
+{% for k, card in chars %}
+<div onclick="insert({{ k }})" class="icon icon_{{ card[0] }}"></div>
+{% endfor %}
+
+<hr />
+
+{% for card in cards %}
+<div onclick="insert({{ card }})" class="icon icon_{{ card }}"></div>
+{% endfor %}
+
+<script>
+function insert(x) {
+  var i = document.querySelector("#ordering_target");
+  var v = i.value;
+  if (v.length && v.substring(v.length - 1) != ",") v += ",";
+  v += x;
+  i.value = v;
+}
+</script>
