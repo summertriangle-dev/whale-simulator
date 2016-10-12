@@ -54,6 +54,21 @@ class ProxyState(object):
         self.replays[server["data_headers"]["user_id"]] = server["data_headers"]
         print("SID updated:", prev, server["data_headers"])
 
+    async def websocket_handler(request):
+        ws = web.WebSocketResponse()
+        await ws.prepare(request)
+        async for msg in ws:
+            if msg.type == aiohttp.WSMsgType.TEXT:
+                if msg.data == 'close':
+                    await ws.close()
+                else:
+                    pass
+            elif msg.type == aiohttp.WSMsgType.ERROR:
+                print('ws connection closed with exception {}'.format(ws.exception()))
+        print('websocket connection closed')
+
+        return ws
+
     async def proxy_do(self, request):
         actual_request_target = request.match_info["rurl"]
         to_url = "{0}://{1}/{2}".format(
